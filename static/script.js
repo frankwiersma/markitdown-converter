@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
         result: document.getElementById('result'),
         markdownResult: document.getElementById('markdown-result'),
         apiKeyInput: document.getElementById('api-key'),
-        copyButton: document.getElementById('copy-button')
+        copyButton: document.getElementById('copy-button'),
+        loading: document.getElementById('loading'),
+        resultWrapper: document.querySelector('.result-wrapper')
     };
 
     // Gestionnaires de fichiers
@@ -35,21 +37,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Conversion et affichage
     function convertContent(url, formData) {
+        showLoading();
+        
         fetch(url, { method: 'POST', body: formData })
             .then(response => response.json())
             .then(handleResponse)
-            .catch(error => alert('Error: ' + error.message));
+            .catch(error => {
+                alert('Error: ' + error.message);
+                hideLoading();
+            });
     }
 
     function handleResponse(data) {
         if (!data.success) {
             alert('Error: ' + data.error);
+            hideLoading();
             return;
         }
 
-        elements.result.hidden = false;
         const formattedText = formatMarkdown(data.markdown);
         elements.markdownResult.textContent = formattedText;
+        elements.result.hidden = false;
+        hideLoading();
     }
 
     function formatMarkdown(text) {
@@ -136,4 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
             copyToClipboard(text);
         }
     });
+
+    function showLoading() {
+        elements.result.hidden = false;
+        elements.loading.hidden = false;
+        elements.resultWrapper.hidden = true;
+        elements.markdownResult.textContent = '';
+    }
+
+    function hideLoading() {
+        elements.loading.hidden = true;
+        elements.resultWrapper.hidden = false;
+    }
 }); 

@@ -209,12 +209,16 @@ h1 {
     background: var(--surface-color);
     margin: 0;
     border-radius: 0 0 0.75rem 0.75rem;
+    position: relative;
+    min-height: 200px;
 }
 
 .result pre {
     margin: 0;
-    padding: 0;
-    background-color: transparent;
+    padding: 1.5rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
     font-family: 'Fira Code', monospace;
     font-size: 0.95rem;
     line-height: 1.6;
@@ -223,6 +227,7 @@ h1 {
     max-width: 100%;
     text-align: left;
     color: var(--text-color);
+    transition: opacity 0.3s ease;
 }
 
 .copy-button {
@@ -259,4 +264,44 @@ h1 {
     body { padding: 0.5rem; }
     .container { padding: 0.5rem; }
     h1 { font-size: 1.75rem; }
-} 
+}
+
+/* Loading animation */
+.loading {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.loading[hidden] {
+    display: none;
+}
+
+.result-wrapper[hidden] {
+    display: none;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+  
