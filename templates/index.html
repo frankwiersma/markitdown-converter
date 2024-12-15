@@ -101,6 +101,32 @@
             </div>
             {% endif %}
 
+            <div class="api-docs collapsed">
+                <div class="api-docs-header">
+                    <h3>API Usage</h3>
+                    <button class="toggle-button" title="Toggle API docs">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="api-docs-content">
+                    <p>Convert using cURL:</p>
+                    <pre><code id="curl-command">curl -X POST \
+    -F "file=@your_file.pdf" \
+    http://localhost:8080/convert
+
+# Or with URL:
+curl -X POST \
+    -F "url=https://example.com/document.pdf" \
+    http://localhost:8080/convert
+
+# For images with OpenAI analysis:
+curl -X POST \
+    -F "file=@image.jpg" \
+    -F "api_key=your-openai-key" \
+    http://localhost:8080/convert</code></pre>
+                </div>
+            </div>
+
             <div id="result" class="result" hidden>
                 <div class="result-header">
                     <h2>Converted content</h2>

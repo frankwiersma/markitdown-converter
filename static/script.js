@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyInput: document.getElementById('api-key'),
         copyButton: document.getElementById('copy-button'),
         loading: document.getElementById('loading'),
-        resultWrapper: document.querySelector('.result-wrapper')
+        resultWrapper: document.querySelector('.result-wrapper'),
+        apiDocs: document.querySelector('.api-docs'),
+        apiDocsToggle: document.querySelector('.toggle-button')
     };
 
     // Gestionnaires de fichiers
@@ -158,6 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    elements.apiDocsToggle.addEventListener('click', () => {
+        elements.apiDocs.classList.toggle('collapsed');
+    });
+
     function showLoading() {
         elements.result.hidden = false;
         elements.loading.hidden = false;
@@ -168,5 +174,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideLoading() {
         elements.loading.hidden = true;
         elements.resultWrapper.hidden = false;
+    }
+
+    function copyCurlCommand() {
+        const curlCommand = document.getElementById('curl-command').textContent;
+        navigator.clipboard.writeText(curlCommand)
+            .then(() => {
+                const copyButton = document.querySelector('.api-docs .copy-button i');
+                copyButton.classList.replace('fa-copy', 'fa-check');
+                setTimeout(() => copyButton.classList.replace('fa-check', 'fa-copy'), 2000);
+            })
+            .catch(err => {
+                console.error('Error copying curl command:', err);
+                alert('Error copying to clipboard');
+            });
     }
 }); 

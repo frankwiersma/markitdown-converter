@@ -304,4 +304,85 @@ h1 {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.api-docs {
+    background: var(--surface-color);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.api-docs.collapsed .api-docs-content {
+    display: none;
+}
+
+.api-docs.collapsed .toggle-button i {
+    transform: rotate(-90deg);
+}
+
+.toggle-button {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.toggle-button i {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.toggle-button:hover {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+.api-docs-content {
+    transition: all 0.3s ease;
+}
+
+.api-docs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.api-docs-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.api-docs-content {
+    padding: 1.5rem;
+}
+
+.api-docs-content p {
+    margin: 0 0 1rem 0;
+    color: #94a3b8;
+}
+
+.api-docs pre {
+    background: var(--bg-color);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.api-docs code {
+    color: var(--text-color);
+}
   

@@ -71,26 +71,59 @@ def convert():
             return jsonify({'success': False, 'error': 'No file provided'}), 400
 
         filename = secure_filename(file.filename)
-        file_path = Config.UPLOAD_FOLDER / filename
+        filepath = Config.UPLOAD_FOLDER / filename
         
         try:
-            file.save(file_path)
-            return handle_file_conversion(file_path)
+            file.save(filepath)
+            api_key = request.form.get('api_key')
+            if api_key and is_image_file(filename):
+                client = OpenAI(api_key=api_key)
+                md = MarkItDown(mlm_client=client, mlm_model='gpt-4o')
+            else:
+                md = MarkItDown()
+                
+            result = md.convert(str(filepath))
+            return jsonify({
+                'success': True, 
+                'markdown': result.text_content,
+                'filename': filename
+            })
         except Exception as e:
-            if file_path.exists():
-                file_path.unlink()
             return jsonify({'success': False, 'error': str(e)}), 400
-
+        finally:
+            if filepath.exists():
+                filepath.unlink()
+    
     elif 'url' in request.form:
         url = request.form['url'].strip()
         if not url:
             return jsonify({'success': False, 'error': 'No URL provided'}), 400
 
-        file_path = download_and_save_file(url)
-        if not file_path:
-            return jsonify({'success': False, 'error': 'Failed to download file'}), 400
-
-        return handle_file_conversion(file_path)
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            
+            filepath = Config.UPLOAD_FOLDER / 'temp_file'
+            filepath.write_bytes(response.content)
+            
+            api_key = request.form.get('api_key')
+            if api_key and any(url.lower().endswith(ext) for ext in Config.ALLOWED_IMAGE_EXTENSIONS):
+                client = OpenAI(api_key=api_key)
+                md = MarkItDown(mlm_client=client, mlm_model='gpt-4o')
+            else:
+                md = MarkItDown()
+                
+            result = md.convert(str(filepath))
+            return jsonify({
+                'success': True, 
+                'markdown': result.text_content,
+                'source_url': url
+            })
+        except Exception as e:
+            return jsonify({'success': False, 'error': str(e)}), 400
+        finally:
+            if filepath.exists():
+                filepath.unlink()
 
     return jsonify({'success': False, 'error': 'No file or URL provided'}), 400
 
