@@ -13,7 +13,14 @@ app.config['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
 # Ensure uploads directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-md = MarkItDown()
+def get_markitdown_instance(file_path=None):
+    """Crée une instance de MarkItDown avec la configuration appropriée"""
+    if file_path and file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+        api_key = app.config['OPENAI_API_KEY'] or request.form.get('api_key')
+        if api_key:
+            client = OpenAI(api_key=api_key)
+            return MarkItDown(mlm_client=client, mlm_model='gpt-4o')
+    return MarkItDown()
 
 @app.route('/')
 def index():
@@ -29,17 +36,7 @@ def convert():
             file.save(filepath)
             
             try:
-                # Configurer MarkItDown avec les paramètres LLM si c'est une image
-                if file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
-                    api_key = app.config['OPENAI_API_KEY'] or request.form.get('api_key')
-                    if api_key:
-                        client = OpenAI(api_key=api_key)
-                        md = MarkItDown(mlm_client=client, mlm_model='gpt-4o')
-                    else:
-                        md = MarkItDown()
-                else:
-                    md = MarkItDown()
-
+                md = get_markitdown_instance(filepath)
                 result = md.convert(filepath)
                 os.remove(filepath)  # Cleanup file
                 return jsonify({'success': True, 'markdown': result.text_content})
@@ -54,11 +51,14 @@ def convert():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_file')
             with open(filepath, 'wb') as f:
                 f.write(response.content)
+            
+            md = get_markitdown_instance(filepath)
             result = md.convert(filepath)
-            print(result.text_content)
             os.remove(filepath)
             return jsonify({'success': True, 'markdown': result.text_content})
         except Exception as e:
+            if os.path.exists(filepath):
+                os.remove(filepath)
             return jsonify({'success': False, 'error': str(e)})
 
     return jsonify({'success': False, 'error': 'No file or URL provided'})
