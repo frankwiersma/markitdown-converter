@@ -3,9 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MarkItDown Converter</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>MarkItDown Converter - Convert Any Document to Markdown</title>
+    <meta name="description" content="Free online tool to convert documents (PDF, Word, PowerPoint, Excel), images, and URLs to Markdown format. Supports OCR and AI-powered image analysis.">
+    <meta name="keywords" content="markdown converter, document conversion, PDF to markdown, OCR, image analysis, text conversion">
+    <meta name="author" content="MarkItDown">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url_root }}">
+    <meta property="og:title" content="MarkItDown Converter - Convert Any Document to Markdown">
+    <meta property="og:description" content="Free online tool to convert documents (PDF, Word, PowerPoint, Excel), images, and URLs to Markdown format. Supports OCR and AI-powered image analysis.">
+    <meta property="og:image" content="{{ url_for('static', filename='icons/og-image.png', _external=True) }}">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request.url_root }}">
+    <meta name="twitter:title" content="MarkItDown Converter - Convert Any Document to Markdown">
+    <meta name="twitter:description" content="Free online tool to convert documents (PDF, Word, PowerPoint, Excel), images, and URLs to Markdown format. Supports OCR and AI-powered image analysis.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='icons/og-image.png', _external=True) }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ url_for('static', filename='icons/favicon-512x512.png') }}">
+    <link rel="icon" type="image/png" sizes="256x256" href="{{ url_for('static', filename='icons/favicon-256x256.png') }}">
+    <link rel="icon" type="image/png" sizes="128x128" href="{{ url_for('static', filename='icons/favicon-128x128.png') }}">
+    <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='icons/favicon-64x64.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16x16.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url_root }}">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "MarkItDown Converter",
+        "description": "Free online tool to convert documents (PDF, Word, PowerPoint, Excel), images, and URLs to Markdown format. Supports OCR and AI-powered image analysis.",
+        "url": "{{ request.url_root }}",
+        "applicationCategory": "Utility",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
 </head>
 <body>
     <div class="container">
