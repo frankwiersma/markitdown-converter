@@ -9,22 +9,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const llmConfig = document.getElementById('llm-config');
     const apiKeyInput = document.getElementById('api-key');
     const modelSelect = document.getElementById('model');
+    const copyButton = document.getElementById('copy-button');
+
+    // Empêcher le comportement par défaut du navigateur pour le drag & drop
+    document.addEventListener('dragover', (e) => e.preventDefault());
+    document.addEventListener('drop', (e) => e.preventDefault());
 
     // Drag & drop handling
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         dropZone.classList.add('drag-over');
     });
 
-    dropZone.addEventListener('dragleave', () => {
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         dropZone.classList.remove('drag-over');
     });
 
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         dropZone.classList.remove('drag-over');
+        
         const file = e.dataTransfer.files[0];
-        handleFile(file);
+        if (file) {
+            handleFile(file);
+        }
     });
 
     // File selection button handling
@@ -88,11 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleResponse(data) {
         if (data.success) {
             result.hidden = false;
-            // Formater le texte en préservant uniquement les doubles sauts de ligne
+            // Formater le texte en préservant la structure
             const formattedText = data.markdown
+                .replace(/\n\n/g, '\u200B\n\n')  // Ajoute un caractère de largeur nulle avant les doubles sauts de ligne
                 .replace(/([^\n])\n([^\n])/g, '$1 $2')  // Remplace les sauts de ligne simples par des espaces
-                .replace(/\n\n/g, '\n\n')               // Préserve les doubles sauts de ligne
-                .trim();                                // Enlève les espaces inutiles au début et à la fin
+                .replace(/\u200B/g, '')  // Retire les caractères de largeur nulle
+                .trim();
             
             markdownResult.textContent = formattedText;
         } else {
@@ -104,19 +117,45 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Error: ' + error.message);
     }
 
-    function copyToClipboard() {
+    // Gestionnaire pour le bouton de copie
+    copyButton.addEventListener('click', () => {
         const markdownText = markdownResult.textContent;
-        navigator.clipboard.writeText(markdownText)
-            .then(() => {
-                const copyButton = document.querySelector('.copy-button i');
-                copyButton.classList.replace('fa-copy', 'fa-check');
+        
+        // Fonction de secours pour copier le texte
+        const fallbackCopyToClipboard = (text) => {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const copyIcon = copyButton.querySelector('i');
+                copyIcon.classList.replace('fa-copy', 'fa-check');
                 setTimeout(() => {
-                    copyButton.classList.replace('fa-check', 'fa-copy');
+                    copyIcon.classList.replace('fa-check', 'fa-copy');
                 }, 2000);
-            })
-            .catch(err => {
-                console.error('Error copying to clipboard:', err);
+            } catch (err) {
+                console.error('Fallback: Erreur lors de la copie', err);
                 alert('Error copying to clipboard');
-            });
-    }
+            }
+            document.body.removeChild(textArea);
+        };
+
+        // Essayer d'abord l'API Clipboard moderne, sinon utiliser la méthode de secours
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(markdownText)
+                .then(() => {
+                    const copyIcon = copyButton.querySelector('i');
+                    copyIcon.classList.replace('fa-copy', 'fa-check');
+                    setTimeout(() => {
+                        copyIcon.classList.replace('fa-check', 'fa-copy');
+                    }, 2000);
+                })
+                .catch(() => {
+                    fallbackCopyToClipboard(markdownText);
+                });
+        } else {
+            fallbackCopyToClipboard(markdownText);
+        }
+    });
 }); 
