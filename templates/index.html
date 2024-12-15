@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarkItDown Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>MarkItDown Converter</h1>
+        
+        <div id="drop-zone" class="drop-zone">
+            <div class="drop-zone-content">
+                <p>Glissez-déposez un fichier ici</p>
+                <p>ou</p>
+                <button id="select-file">Sélectionner un fichier</button>
+                <input type="file" id="file-input" hidden>
+            </div>
+        </div>
+
+        <div class="url-input">
+            <input type="text" id="url-input" placeholder="Ou entrez une URL...">
+            <button id="convert-url">Convertir</button>
+        </div>
+
+        <div id="result" class="result" hidden>
+            <div class="result-header">
+                <h2>Résultat</h2>
+                <button class="copy-button" onclick="copyToClipboard()" title="Copier dans le presse-papiers">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <pre><code id="markdown-result"></code></pre>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
