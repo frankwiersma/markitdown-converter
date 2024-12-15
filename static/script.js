@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const convertUrlBtn = document.getElementById('convert-url');
     const result = document.getElementById('result');
     const markdownResult = document.getElementById('markdown-result');
+    const llmConfig = document.getElementById('llm-config');
+    const apiKeyInput = document.getElementById('api-key');
+    const modelSelect = document.getElementById('model');
 
     // Drag & drop handling
     dropZone.addEventListener('dragover', (e) => {
@@ -42,9 +45,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function isImageFile(file) {
+        return file && file.type.startsWith('image/');
+    }
+
     function handleFile(file) {
         const formData = new FormData();
         formData.append('file', file);
+
+        // Si c'est une image et qu'il n'y a pas de clé API dans l'environnement
+        if (isImageFile(file) && document.getElementById('api-key')) {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                alert('Please provide an OpenAI API key for image analysis');
+                return;
+            }
+            formData.append('api_key', apiKey);
+        }
 
         fetch('/convert', {
             method: 'POST',

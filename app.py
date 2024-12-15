@@ -3,10 +3,12 @@ from markitdown import MarkItDown
 import os
 import requests
 from werkzeug.utils import secure_filename
+from openai import OpenAI
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
 
 # Ensure uploads directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -15,7 +17,7 @@ md = MarkItDown()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', has_api_key=bool(app.config['OPENAI_API_KEY']))
 
 @app.route('/convert', methods=['POST'])
 def convert():
@@ -25,7 +27,19 @@ def convert():
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
+            
             try:
+                # Configurer MarkItDown avec les paramètres LLM si c'est une image
+                if file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+                    api_key = app.config['OPENAI_API_KEY'] or request.form.get('api_key')
+                    if api_key:
+                        client = OpenAI(api_key=api_key)
+                        md = MarkItDown(mlm_client=client, mlm_model='gpt-4o')
+                    else:
+                        md = MarkItDown()
+                else:
+                    md = MarkItDown()
+
                 result = md.convert(filepath)
                 os.remove(filepath)  # Cleanup file
                 return jsonify({'success': True, 'markdown': result.text_content})

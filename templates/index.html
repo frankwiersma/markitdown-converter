@@ -26,6 +26,16 @@
             <button id="convert-url">Convert</button>
         </div>
 
+        {% if not has_api_key %}
+        <div class="api-config">
+            <div class="form-group">
+                <label for="api-key">OpenAI API Key (required for image analysis):</label>
+                <input type="password" id="api-key" placeholder="sk-...">
+                <small class="help-text">Images will be analyzed using GPT-4 Vision model</small>
+            </div>
+        </div>
+        {% endif %}
+
         <div id="result" class="result" hidden>
             <div class="result-header">
                 <h2>Result</h2>
