@@ -35,6 +35,12 @@ class Config:
     # Logging
     LOG_LEVEL = 'INFO'
     LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    LOGGERS = {
+        'werkzeug': {'level': 'INFO'},
+        'pdfminer': {'level': 'WARNING'},  # Augmente le niveau pour pdfminer
+        'markitdown': {'level': 'INFO'},
+        'openai': {'level': 'INFO'},
+    }
     
     # Development settings
     DEBUG = os.getenv('FLASK_ENV') == 'development'
@@ -54,16 +60,30 @@ class Config:
         
         # Configure logging
         import logging
+        
+        # Configuration de base
         logging.basicConfig(
             level=getattr(logging, cls.LOG_LEVEL),
             format=cls.LOG_FORMAT
         )
+        
+        # Configuration spécifique par logger
+        for logger_name, logger_config in cls.LOGGERS.items():
+            logger = logging.getLogger(logger_name)
+            logger.setLevel(logger_config['level'])
+        
+        # Configuration du logger Flask
         app.logger.setLevel(getattr(logging, cls.LOG_LEVEL))
 
 class DevelopmentConfig(Config):
     """Development configuration."""
     DEBUG = True
     LOG_LEVEL = 'DEBUG'
+    LOGGERS = {
+        **Config.LOGGERS,
+        'werkzeug': {'level': 'DEBUG'},
+        'pdfminer': {'level': 'WARNING'},  # Toujours en WARNING même en dev
+    }
 
 class ProductionConfig(Config):
     """Production configuration."""

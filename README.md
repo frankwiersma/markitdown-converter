@@ -52,7 +52,7 @@ For local development:
 uv run app.py
 
 # Or with uvicorn (using ASGI)
-uv run uvicorn app:asgi_app --host 0.0.0.0 --port 8080 --reload
+uv run uvicorn app:app --host 0.0.0.0 --port 8080 --reload
 ```
 
 ### Running with Uvicorn in Production
