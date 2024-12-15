@@ -2,8 +2,6 @@
 
 MarkItDown Converter is a web application that converts various document formats into Markdown. It supports files, URLs, and includes AI-powered image analysis capabilities.
 
-![MarkItDown Screenshot](screenshot.png)
-
 ## Features
 
 - **Multiple Input Methods**:
@@ -44,56 +42,26 @@ uv pip install -e .
 
 ## Usage
 
-### Running with uv (Recommended)
+### Running the Application
 
-For local development:
+For development:
 ```bash
-# Basic usage
-uv run app.py
-
-# Or with uvicorn (using ASGI)
+# Using uvicorn (recommended)
 uv run uvicorn app:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-### Running with Uvicorn in Production
-
-For production deployment:
+For production:
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8080 --workers 4
 ```
 
-Additional Uvicorn options:
-- `--reload`: Enable auto-reload on code changes
-- `--workers N`: Number of worker processes (recommended: 2-4 × CPU cores)
-- `--log-level`: Set log level (debug, info, warning, error, critical)
-- `--ssl-keyfile`: SSL key file for HTTPS
-- `--ssl-certfile`: SSL certificate file for HTTPS
-
-*Note: Using `uv run` is recommended for development as it provides better dependency isolation and faster startup times.*
-
-### Flask Development Server
-
-For local development only:
-```bash
-python app.py
-```
-
-*Note: The Flask development server is not suitable for production use.*
-
 ### Web Interface
 
-1. Start the server:
-```bash
-python app.py
-```
-
-2. Open your browser and navigate to `http://localhost:8080`
-
-3. Use the application by:
-   - Dragging and dropping files
-   - Clicking "Select a file"
-   - Entering a URL
-   - For images, provide an OpenAI API key if not set in environment
+Open your browser and navigate to `http://localhost:8080`. You can:
+- Drag and drop files
+- Select files using the file dialog
+- Convert content from URLs
+- Use OpenAI for image analysis (API key required)
 
 ### API Usage
 
@@ -122,7 +90,7 @@ curl -X POST \
 ## Development
 
 The application is built with:
-- Flask (Python web framework)
+- Quart (async Python web framework)
 - MarkItDown library for conversions
 - OpenAI GPT-4o for image analysis
 - Modern JavaScript (ES6+)
@@ -131,37 +99,20 @@ The application is built with:
 Project structure:
 ```
 markitdown-converter/
-├── app.py              # Flask application
+├── app.py              # Quart application
+├── config.py          # Configuration
 ├── static/
 │   ├── style.css      # Styles
 │   ├── script.js      # Frontend logic
 │   └── icons/         # Application icons
-├── templates/
-│   └── index.html     # Main template
-└── pyproject.toml     # Project configuration
+└── templates/
+    └── index.html     # Main template
 ```
 
 ## Requirements
 
 - Python 3.12 or higher
-- Flask 3.1.0 or higher
-- MarkItDown 0.0.1a2 or higher
-- OpenAI API key (for image analysis)
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- Dependencies listed in pyproject.toml
 
 ## License
 
