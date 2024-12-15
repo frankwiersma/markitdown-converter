@@ -146,6 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    elements.urlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();  // Empêche le comportement par défaut
+            const url = elements.urlInput.value.trim();
+            if (url) {
+                const formData = new FormData();
+                formData.append('url', url);
+                convertContent('/convert', formData);
+            }
+        }
+    });
+
     function showLoading() {
         elements.result.hidden = false;
         elements.loading.hidden = false;
