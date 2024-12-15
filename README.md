@@ -129,3 +129,69 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with [MarkItDown](https://github.com/path/to/markitdown)
 - Uses OpenAI's GPT-4o for image analysis
 - Icons from Font Awesome
+
+## Deployment
+
+### Deploying on Clever Cloud
+
+1. Install the Clever Tools:
+```bash
+npm i -g clever-tools
+```
+
+2. Login to your Clever Cloud account:
+```bash
+clever login
+```
+
+3. Create a new Python application:
+```bash
+# Create the application
+clever create -t python markitdown
+
+# Link your local repository
+clever link <app_id>
+```
+
+4. Configure the required environment variables:
+```bash
+# Set Python runtime version
+clever env set CC_PYTHON_VERSION 3.12
+
+# Set application type to WSGI
+clever env set CC_PYTHON_MODULE app
+clever env set CC_PYTHON_BACKEND uvicorn
+
+# Set OpenAI API key (if needed)
+clever env set OPENAI_API_KEY <your-api-key>
+
+# Set environment
+clever env set QUART_ENV production
+```
+
+5. Deploy your application:
+```bash
+clever deploy
+```
+
+Your application will be available at the URL provided by Clever Cloud. You can check the logs with:
+```bash
+clever logs
+```
+
+Additional deployment commands:
+```bash
+# Scale your application
+clever scale --flavor <flavor>
+
+# Add a domain name
+clever domain add <your-domain.com>
+
+# Check application status
+clever status
+
+# View application information
+clever activity
+```
+
+For more details, see the [Clever Cloud Documentation](https://www.clever-cloud.com/doc/python/python/).
