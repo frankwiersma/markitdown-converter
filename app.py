@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
-# Assurez-vous que le dossier uploads existe
+# Ensure uploads directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 md = MarkItDown()
@@ -27,10 +27,10 @@ def convert():
             file.save(filepath)
             try:
                 result = md.convert(filepath)
-                os.remove(filepath)  # Nettoyage du fichier
+                os.remove(filepath)  # Cleanup file
                 return jsonify({'success': True, 'markdown': result.text_content})
             except Exception as e:
-                os.remove(filepath)  # Nettoyage en cas d'erreur
+                os.remove(filepath)  # Cleanup on error
                 return jsonify({'success': False, 'error': str(e)})
     
     elif 'url' in request.form:
@@ -41,6 +41,7 @@ def convert():
             with open(filepath, 'wb') as f:
                 f.write(response.content)
             result = md.convert(filepath)
+            print(result.text_content)
             os.remove(filepath)
             return jsonify({'success': True, 'markdown': result.text_content})
         except Exception as e:

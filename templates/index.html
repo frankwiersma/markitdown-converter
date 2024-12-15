@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MarkItDown Converter</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -13,22 +14,22 @@
         
         <div id="drop-zone" class="drop-zone">
             <div class="drop-zone-content">
-                <p>Glissez-déposez un fichier ici</p>
-                <p>ou</p>
-                <button id="select-file">Sélectionner un fichier</button>
+                <p>Drag and drop a file here</p>
+                <p>or</p>
+                <button id="select-file">Select a file</button>
                 <input type="file" id="file-input" hidden>
             </div>
         </div>
 
         <div class="url-input">
-            <input type="text" id="url-input" placeholder="Ou entrez une URL...">
-            <button id="convert-url">Convertir</button>
+            <input type="text" id="url-input" placeholder="Or enter a URL...">
+            <button id="convert-url">Convert</button>
         </div>
 
         <div id="result" class="result" hidden>
             <div class="result-header">
-                <h2>Résultat</h2>
-                <button class="copy-button" onclick="copyToClipboard()" title="Copier dans le presse-papiers">
+                <h2>Result</h2>
+                <button class="copy-button" onclick="copyToClipboard()" title="Copy to clipboard">
                     <i class="fas fa-copy"></i>
                 </button>
             </div>

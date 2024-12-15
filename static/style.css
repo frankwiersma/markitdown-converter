@@ -85,6 +85,10 @@ button:hover {
     white-space: pre-wrap;
     word-wrap: break-word;
     margin: 0;
+    background-color: #2d2d2d;
+    padding: 1rem;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .result code {
@@ -141,4 +145,67 @@ button:hover {
 .copy-button i.fa-check {
     animation: copyFeedback 0.3s ease;
     color: #4CAF50;
+}
+
+/* Styles pour le Markdown rendu */
+.result h1, .result h2, .result h3, .result h4, .result h5, .result h6 {
+    color: var(--accent-color);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.result p {
+    margin: 1em 0;
+    line-height: 1.6;
+    white-space: normal;
+}
+
+.result a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.result a:hover {
+    text-decoration: underline;
+}
+
+.result ul, .result ol {
+    padding-left: 2em;
+    margin: 1em 0;
+}
+
+.result li {
+    margin: 0.5em 0;
+}
+
+.result blockquote {
+    border-left: 3px solid var(--accent-color);
+    margin: 1em 0;
+    padding-left: 1em;
+    color: #888;
+}
+
+.markdown-content {
+    padding: 1rem;
+    line-height: 1.6;
+}
+
+/* Pour les blocs de code dans le Markdown */
+.markdown-content pre {
+    background-color: #2d2d2d;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.markdown-content code {
+    font-family: 'Courier New', Courier, monospace;
+    color: #e6e6e6;
+}
+
+/* Pour le code en ligne */
+.markdown-content p code {
+    background-color: #2d2d2d;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
 } 

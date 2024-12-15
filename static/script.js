@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const result = document.getElementById('result');
     const markdownResult = document.getElementById('markdown-result');
 
-    // Gestion du drag & drop
+    // Drag & drop handling
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.classList.add('drag-over');
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleFile(file);
     });
 
-    // Gestion du bouton de sélection de fichier
+    // File selection button handling
     selectFileBtn.addEventListener('click', () => {
         fileInput.click();
     });
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleFile(file);
     });
 
-    // Gestion de la conversion par URL
+    // URL conversion handling
     convertUrlBtn.addEventListener('click', () => {
         const url = urlInput.value.trim();
         if (url) {
@@ -71,30 +71,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleResponse(data) {
         if (data.success) {
             result.hidden = false;
-            markdownResult.textContent = data.markdown;
+            // Formater le texte en préservant uniquement les doubles sauts de ligne
+            const formattedText = data.markdown
+                .replace(/([^\n])\n([^\n])/g, '$1 $2')  // Remplace les sauts de ligne simples par des espaces
+                .replace(/\n\n/g, '\n\n')               // Préserve les doubles sauts de ligne
+                .trim();                                // Enlève les espaces inutiles au début et à la fin
+            
+            markdownResult.textContent = formattedText;
         } else {
-            alert('Erreur: ' + data.error);
+            alert('Error: ' + data.error);
         }
     }
 
     function handleError(error) {
-        alert('Erreur: ' + error.message);
+        alert('Error: ' + error.message);
     }
 
     function copyToClipboard() {
-        const markdownText = document.getElementById('markdown-result').textContent;
+        const markdownText = markdownResult.textContent;
         navigator.clipboard.writeText(markdownText)
             .then(() => {
                 const copyButton = document.querySelector('.copy-button i');
-                // Change l'icône temporairement pour donner un feedback visuel
                 copyButton.classList.replace('fa-copy', 'fa-check');
                 setTimeout(() => {
                     copyButton.classList.replace('fa-check', 'fa-copy');
                 }, 2000);
             })
             .catch(err => {
-                console.error('Erreur lors de la copie :', err);
-                alert('Erreur lors de la copie dans le presse-papiers');
+                console.error('Error copying to clipboard:', err);
+                alert('Error copying to clipboard');
             });
     }
 }); 
