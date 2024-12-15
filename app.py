@@ -1,67 +1,108 @@
 from flask import Flask, render_template, request, jsonify
 from markitdown import MarkItDown
+from openai import OpenAI
+from werkzeug.utils import secure_filename
 import os
 import requests
-from werkzeug.utils import secure_filename
-from openai import OpenAI
+from typing import Optional, Tuple
+from pathlib import Path
+
+class Config:
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max-limit
+    UPLOAD_FOLDER = Path('uploads')
+    ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
+app.config.from_object(Config)
 
 # Ensure uploads directory exists
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+Config.UPLOAD_FOLDER.mkdir(exist_ok=True)
 
-def get_markitdown_instance(file_path=None):
-    """Crée une instance de MarkItDown avec la configuration appropriée"""
-    if file_path and file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
-        api_key = app.config['OPENAI_API_KEY'] or request.form.get('api_key')
+def is_image_file(filename: str) -> bool:
+    """Check if a file is an image based on its extension."""
+    return Path(filename).suffix.lower() in Config.ALLOWED_IMAGE_EXTENSIONS
+
+def get_markitdown_instance(file_path: Optional[str] = None) -> MarkItDown:
+    """Create a MarkItDown instance with appropriate configuration."""
+    if file_path and is_image_file(file_path):
+        api_key = Config.OPENAI_API_KEY or request.form.get('api_key')
         if api_key:
             client = OpenAI(api_key=api_key)
             return MarkItDown(mlm_client=client, mlm_model='gpt-4o')
     return MarkItDown()
 
+def handle_file_conversion(file_path: Path) -> Tuple[dict, int]:
+    """Convert a file to markdown and handle cleanup."""
+    try:
+        md = get_markitdown_instance(str(file_path))
+        result = md.convert(str(file_path))
+        return {'success': True, 'markdown': result.text_content}, 200
+    except Exception as e:
+        return {'success': False, 'error': str(e)}, 400
+    finally:
+        if file_path.exists():
+            file_path.unlink()
+
+def download_and_save_file(url: str) -> Optional[Path]:
+    """Download a file from URL and save it temporarily."""
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        
+        file_path = Config.UPLOAD_FOLDER / 'temp_file'
+        file_path.write_bytes(response.content)
+        return file_path
+    except requests.RequestException as e:
+        return None
+
 @app.route('/')
 def index():
-    return render_template('index.html', has_api_key=bool(app.config['OPENAI_API_KEY']))
+    """Render the main page."""
+    return render_template('index.html', 
+                         has_api_key=bool(Config.OPENAI_API_KEY))
 
 @app.route('/convert', methods=['POST'])
 def convert():
+    """Handle file conversion requests."""
     if 'file' in request.files:
         file = request.files['file']
-        if file.filename:
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-            
-            try:
-                md = get_markitdown_instance(filepath)
-                result = md.convert(filepath)
-                os.remove(filepath)  # Cleanup file
-                return jsonify({'success': True, 'markdown': result.text_content})
-            except Exception as e:
-                os.remove(filepath)  # Cleanup on error
-                return jsonify({'success': False, 'error': str(e)})
-    
-    elif 'url' in request.form:
-        url = request.form['url']
-        try:
-            response = requests.get(url)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'temp_file')
-            with open(filepath, 'wb') as f:
-                f.write(response.content)
-            
-            md = get_markitdown_instance(filepath)
-            result = md.convert(filepath)
-            os.remove(filepath)
-            return jsonify({'success': True, 'markdown': result.text_content})
-        except Exception as e:
-            if os.path.exists(filepath):
-                os.remove(filepath)
-            return jsonify({'success': False, 'error': str(e)})
+        if not file.filename:
+            return jsonify({'success': False, 'error': 'No file provided'}), 400
 
-    return jsonify({'success': False, 'error': 'No file or URL provided'})
+        filename = secure_filename(file.filename)
+        file_path = Config.UPLOAD_FOLDER / filename
+        
+        try:
+            file.save(file_path)
+            return handle_file_conversion(file_path)
+        except Exception as e:
+            if file_path.exists():
+                file_path.unlink()
+            return jsonify({'success': False, 'error': str(e)}), 400
+
+    elif 'url' in request.form:
+        url = request.form['url'].strip()
+        if not url:
+            return jsonify({'success': False, 'error': 'No URL provided'}), 400
+
+        file_path = download_and_save_file(url)
+        if not file_path:
+            return jsonify({'success': False, 'error': 'Failed to download file'}), 400
+
+        return handle_file_conversion(file_path)
+
+    return jsonify({'success': False, 'error': 'No file or URL provided'}), 400
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    """Handle file size exceeded error."""
+    return jsonify({
+        'success': False,
+        'error': 'File size exceeds the limit (16MB)'
+    }), 413
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080) 
+    
+    
