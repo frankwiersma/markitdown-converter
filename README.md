@@ -40,6 +40,12 @@ pip install uv
 uv pip install -e .
 ```
 
+3. Optional: Set environment variables:
+```bash
+export QUART_ENV=development  # or production
+export OPENAI_API_KEY=your-api-key  # required for image analysis
+```
+
 ## Usage
 
 ### Running the Application

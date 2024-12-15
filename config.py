@@ -24,7 +24,7 @@ class Config:
     REQUEST_TIMEOUT = 10
     
     # Development settings
-    DEBUG = os.getenv('FLASK_ENV') == 'development'
+    DEBUG = os.getenv('QUART_ENV') == 'development'
     
     @classmethod
     def init_app(cls, app):
@@ -45,5 +45,5 @@ config = {
 }
 
 def get_config():
-    env = os.getenv('FLASK_ENV', 'development')
+    env = os.getenv('QUART_ENV', 'development')
     return config.get(env, config['default'])
