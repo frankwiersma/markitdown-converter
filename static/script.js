@@ -21,12 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append('file', file);
 
-        if (isImageFile(file) && elements.apiKeyInput) {
+        if (elements.apiKeyInput) {
             const apiKey = elements.apiKeyInput.value.trim();
-            if (!apiKey) {
-                alert('Please provide an OpenAI API key for image analysis');
-                return;
-            }
             formData.append('api_key', apiKey);
         }
 

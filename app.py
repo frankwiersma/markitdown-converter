@@ -6,9 +6,10 @@ import os
 import requests
 from typing import Optional, Tuple
 from pathlib import Path
+from asgiref.wsgi import WsgiToAsgi
 
 class Config:
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max-limit
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
     UPLOAD_FOLDER = Path('uploads')
     ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -74,21 +75,31 @@ def convert():
         filepath = Config.UPLOAD_FOLDER / filename
         
         try:
+            # Assurons-nous que le fichier est bien lu
             file.save(filepath)
-            api_key = request.form.get('api_key')
-            if api_key and is_image_file(filename):
+            
+            # Récupérer la clé API depuis le formulaire ou l'environnement
+            api_key = request.form.get('api_key') or Config.OPENAI_API_KEY
+            
+            # Vérifier si c'est une image et si nous avons une clé API
+            if is_image_file(filename) and api_key:
                 client = OpenAI(api_key=api_key)
                 md = MarkItDown(mlm_client=client, mlm_model='gpt-4o')
             else:
                 md = MarkItDown()
-                
+            
+            # Convertir le fichier
             result = md.convert(str(filepath))
+            
+            # Retourner le résultat
             return jsonify({
                 'success': True, 
                 'markdown': result.text_content,
-                'filename': filename
+                'filename': filename,
+                'is_image': is_image_file(filename)
             })
         except Exception as e:
+            app.logger.error(f"Error processing file: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 400
         finally:
             if filepath.exists():
@@ -134,6 +145,13 @@ def request_entity_too_large(error):
         'success': False,
         'error': 'File size exceeds the limit (16MB)'
     }), 413
+
+# Convertir l'application Flask en ASGI
+asgi_app = WsgiToAsgi(app)
+
+# Configuration pour Uvicorn
+app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080) 
