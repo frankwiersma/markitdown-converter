@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- SEO Meta Tags -->
     <title>MarkItDown Converter - Convert Any Document to Markdown</title>
     <meta name="description" content="Free online tool to convert documents (PDF, Word, PowerPoint, Excel), images, and URLs to Markdown format. Supports OCR and AI-powered image analysis.">
     <meta name="keywords" content="markdown converter, document conversion, PDF to markdown, OCR, image analysis, text conversion">
     <meta name="author" content="MarkItDown">
     <meta name="robots" content="index, follow">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url_root }}">
@@ -33,7 +33,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16x16.png') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ request.url_root }}">
 
@@ -65,7 +65,7 @@
             <h1>MarkItDown Converter</h1>
             <p class="subtitle">Convert any document to Markdown format</p>
         </header>
-        
+
         <main>
             <div id="drop-zone" class="drop-zone">
                 <div class="drop-zone-content">
@@ -112,18 +112,18 @@
                     <p>Convert using cURL:</p>
                     <pre><code id="curl-command">curl -X POST \
     -F "file=@your_file.pdf" \
-    http://localhost:8080/convert
+    https://example.com/convert
 
 # Or with URL:
 curl -X POST \
     -F "url=https://example.com/document.pdf" \
-    http://localhost:8080/convert
+    http://example.com/convert
 
 # For images with OpenAI analysis:
 curl -X POST \
     -F "file=@image.jpg" \
     -F "api_key=your-openai-key" \
-    http://localhost:8080/convert</code></pre>
+    http://example.com/convert</code></pre>
                 </div>
             </div>
 
@@ -147,4 +147,4 @@ curl -X POST \
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
-</html> 
+</html>

@@ -2,7 +2,7 @@
 MarkItDown Converter Web Application
 """
 
-from quart import Quart, render_template, request, jsonify
+from quart import Quart, render_template, request
 from markitdown import MarkItDown
 from openai import OpenAI
 from werkzeug.utils import secure_filename
@@ -93,5 +93,3 @@ async def convert():
 
 if __name__ == '__main__':
     app.run(host=config.HOST, port=config.PORT)
-    
-    

@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "asgiref>=3.8.1",
-    "quart>=0.19.4",
+    "quart>=0.19.9",
     "markitdown>=0.0.1a2",
     "openai>=1.57.4",
     "requests>=2.32.3",
