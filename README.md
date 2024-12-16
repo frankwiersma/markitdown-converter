@@ -2,6 +2,12 @@
 
 MarkItDown Converter is a web application that converts various document formats into Markdown. It supports files, URLs, and includes AI-powered image analysis capabilities.
 
+## Acknowledgments
+
+- Built with [MarkItDown](https://github.com/path/to/markitdown)
+- Uses OpenAI's GPT-4o for image analysis
+- Icons from Font Awesome
+
 ## Features
 
 - **Multiple Input Methods**:
@@ -27,38 +33,33 @@ MarkItDown Converter is a web application that converts various document formats
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/markitdown-converter.git
+git clone https://github.com/CleverCloud/markitdown-converter.git
 cd markitdown-converter
 ```
 
-2. Install dependencies with uv (recommended):
+2. Install dependencies with `uv` (recommended):
 ```bash
-# Install uv if not already installed
-pip install uv
+# Install uv if not already installed on Linux, macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install dependencies
-uv pip install -e .
+# Install uv if not already installed on Windows
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+uv sync
 ```
 
 3. Optional: Set environment variables:
 ```bash
 export QUART_ENV=development  # or production
-export OPENAI_API_KEY=your-api-key  # required for image analysis
+export OPENAI_API_KEY=your-api-key  # or users will have to enter their own
 ```
 
 ## Usage
 
-### Running the Application
+### Running the application for development
 
-For development:
 ```bash
-# Using uvicorn (recommended)
 uv run uvicorn app:app --host 0.0.0.0 --port 8080 --reload
-```
-
-For production:
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8080 --workers 4
 ```
 
 ### Web Interface
@@ -92,49 +93,9 @@ curl -X POST \
     -F "api_key=your-openai-key" \
     http://localhost:8080/convert
 ```
+## Deployment on Clever Cloud
 
-## Development
-
-The application is built with:
-- Quart (async Python web framework)
-- MarkItDown library for conversions
-- OpenAI GPT-4o for image analysis
-- Modern JavaScript (ES6+)
-- CSS3 with custom properties
-
-Project structure:
-```
-markitdown-converter/
-├── app.py              # Quart application
-├── config.py          # Configuration
-├── static/
-│   ├── style.css      # Styles
-│   ├── script.js      # Frontend logic
-│   └── icons/         # Application icons
-└── templates/
-    └── index.html     # Main template
-```
-
-## Requirements
-
-- Python 3.12 or higher
-- Dependencies listed in pyproject.toml
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Built with [MarkItDown](https://github.com/path/to/markitdown)
-- Uses OpenAI's GPT-4o for image analysis
-- Icons from Font Awesome
-
-## Deployment
-
-### Deploying on Clever Cloud
-
-1. Install the Clever Tools:
+1. Install the Clever Tools with `npm` (or [other methods](https://github.com/CleverCloud/clever-tools?tab=readme-ov-file#installation)):
 ```bash
 npm i -g clever-tools
 ```
@@ -144,29 +105,22 @@ npm i -g clever-tools
 clever login
 ```
 
-3. Create a new Python application:
+3. Get this repository and create a new Python application:
 ```bash
-# Create the application
-clever create -t python markitdown
+# Clone the repository
+git clone https://github.com/CleverCloud/markitdown-converter.git
 
-# Link your local repository
-clever link <app_id>
+# Create the application
+cd markitdown-converter
+clever create -t python
 ```
 
 4. Configure the required environment variables:
 ```bash
-# Set Python runtime version
-clever env set CC_PYTHON_VERSION 3.12
-
-# Set application type to WSGI
-clever env set CC_PYTHON_MODULE app
-clever env set CC_PYTHON_BACKEND uvicorn
-
-# Set OpenAI API key (if needed)
-clever env set OPENAI_API_KEY <your-api-key>
-
-# Set environment
 clever env set QUART_ENV production
+clever env set CC_PRE_BUILD_HOOK "uv sync"
+clever env set CC_RUN_COMMAND "uv run uvicorn app:app --host 0.0.0.0 --port 9000 --workers 4"
+clever env set OPENAI_API_KEY  # if you want to provide your own OpenAI API key
 ```
 
 5. Deploy your application:
@@ -174,9 +128,9 @@ clever env set QUART_ENV production
 clever deploy
 ```
 
-Your application will be available at the URL provided by Clever Cloud. You can check the logs with:
+Your application will be available at the URL provided by Clever Cloud. You can access it with:
 ```bash
-clever logs
+clever open
 ```
 
 Additional deployment commands:
@@ -194,4 +148,8 @@ clever status
 clever activity
 ```
 
-For more details, see the [Clever Cloud Documentation](https://www.clever-cloud.com/doc/python/python/).
+For more details, see the [Clever Cloud Documentation](https://developers.clever-cloud.com/doc).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
