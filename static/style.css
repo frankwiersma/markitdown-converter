@@ -269,6 +269,12 @@ h1 {
         flex-direction: column;
         .button { width: 100%; }
     }
+}
+
+@media (max-width: 480px) {
+    body { padding: 0.5rem; }
+    .container { padding: 0.5rem; }
+    h1 { font-size: 1.75rem; }
     .split-layout {
         flex-direction: column;
         height: auto;
@@ -276,12 +282,6 @@ h1 {
     .left-pane, .right-pane {
         width: 100%;
     }
-}
-
-@media (max-width: 480px) {
-    body { padding: 0.5rem; }
-    .container { padding: 0.5rem; }
-    h1 { font-size: 1.75rem; }
 }
 
 /* Loading animation */
