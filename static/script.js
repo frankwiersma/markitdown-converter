@@ -161,15 +161,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function showLoading() {
-        elements.result.hidden = false;
         elements.loading.hidden = false;
         elements.resultWrapper.hidden = true;
+        elements.copyButton.hidden = true;
         elements.markdownResult.textContent = '';
     }
 
     function hideLoading() {
         elements.loading.hidden = true;
         elements.resultWrapper.hidden = false;
+        elements.copyButton.hidden = false;
     }
 
     function copyCurlCommand() {

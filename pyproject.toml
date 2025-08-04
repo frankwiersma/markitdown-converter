@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "asgiref>=3.8.1",
     "quart>=0.19.9",
-    "markitdown>=0.0.1a2",
+    "markitdown[all]>=0.1.2",
     "openai>=1.57.4",
     "requests>=2.32.3",
     "uvicorn>=0.34.0",

@@ -67,79 +67,85 @@
         </header>
 
         <main>
-            <div id="drop-zone" class="drop-zone">
-                <div class="drop-zone-content">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Drag and drop a file here</p>
-                    <p class="or-divider">or</p>
-                    <button id="select-file" class="primary-button">
-                        <i class="fas fa-file"></i>
-                        Select a file
-                    </button>
-                    <input type="file" id="file-input" hidden>
-                </div>
-            </div>
+            <div class="split-layout">
+                <div class="left-pane">
+                    <div id="drop-zone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag and drop a file here</p>
+                            <p class="or-divider">or</p>
+                            <button id="select-file" class="primary-button">
+                                <i class="fas fa-file"></i>
+                                Select a file
+                            </button>
+                            <input type="file" id="file-input" hidden>
+                        </div>
+                    </div>
 
-            <div class="url-section">
-                <div class="url-input">
-                    <i class="fas fa-link"></i>
-                    <input type="text" id="url-input" placeholder="Or enter a URL...">
-                    <button id="convert-url" class="primary-button">Convert</button>
-                </div>
-            </div>
+                    <div class="url-section">
+                        <div class="url-input">
+                            <i class="fas fa-link"></i>
+                            <input type="text" id="url-input" placeholder="Or enter a URL...">
+                            <button id="convert-url" class="primary-button">Convert</button>
+                        </div>
+                    </div>
 
-            {% if not has_api_key %}
-            <div class="api-config">
-                <div class="form-group">
-                    <label for="api-key">
-                        <i class="fas fa-key"></i>
-                        OpenAI API Key (required for image analysis)
-                    </label>
-                    <input type="password" id="api-key" placeholder="sk-...">
-                    <small class="help-text">Images will be analyzed using GPT-4o</small>
-                </div>
-            </div>
-            {% endif %}
+                    {% if not has_api_key %}
+                    <div class="api-config">
+                        <div class="form-group">
+                            <label for="api-key">
+                                <i class="fas fa-key"></i>
+                                OpenAI API Key (required for image analysis)
+                            </label>
+                            <input type="password" id="api-key" placeholder="sk-...">
+                            <small class="help-text">Images will be analyzed using GPT-4o</small>
+                        </div>
+                    </div>
+                    {% endif %}
 
-            <div class="api-docs collapsed">
-                <div class="api-docs-header">
-                    <h3>API Usage</h3>
-                    <button class="toggle-button" title="Toggle API docs">
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                </div>
-                <div class="api-docs-content">
-                    <p>Convert using cURL:</p>
-                    <pre><code id="curl-command">curl -X POST \
+                    <div class="api-docs collapsed">
+                        <div class="api-docs-header">
+                            <h3>API Usage</h3>
+                            <button class="toggle-button" title="Toggle API docs">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div class="api-docs-content">
+                            <p>Convert using cURL:</p>
+                            <pre><code id="curl-command">curl -X POST \
     -F "file=@your_file.pdf" \
-    https://example.com/convert
+    http://localhost:8080/convert
 
 # Or with URL:
 curl -X POST \
     -F "url=https://example.com/document.pdf" \
-    http://example.com/convert
+    http://localhost:8080/convert
 
 # For images with OpenAI analysis:
 curl -X POST \
     -F "file=@image.jpg" \
     -F "api_key=your-openai-key" \
-    http://example.com/convert</code></pre>
+    http://localhost:8080/convert</code></pre>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div id="result" class="result" hidden>
-                <div class="result-header">
-                    <h2>Converted content</h2>
-                    <button id="copy-button" class="copy-button" title="Copy to clipboard">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-                <div id="loading" class="loading" hidden>
-                    <div class="loading-spinner"></div>
-                    <div class="loading-text">Converting your document...</div>
-                </div>
-                <div class="result-wrapper">
-                    <pre><code id="markdown-result"></code></pre>
+                <div class="right-pane">
+                    <div id="result" class="result">
+                        <div class="result-header">
+                            <h2>Markdown Result</h2>
+                            <button id="copy-button" class="copy-button" title="Copy to clipboard" hidden>
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div id="loading" class="loading" hidden>
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Converting your document...</div>
+                        </div>
+                        <div class="result-wrapper">
+                            <pre><code id="markdown-result">Upload a file or enter a URL to see the converted markdown here...</code></pre>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>

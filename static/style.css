@@ -24,7 +24,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 2rem 1rem;
 }
@@ -49,12 +49,25 @@ h1 {
     font-size: 1.1rem;
 }
 
+.split-layout {
+    display: flex;
+    gap: 2rem;
+    height: calc(100vh - 250px);
+    min-height: 600px;
+}
+
+.left-pane, .right-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .drop-zone {
     border: 2px dashed var(--border-color);
     border-radius: 1rem;
-    padding: 3rem 2rem;
+    padding: 2rem 1.5rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     transition: all 0.3s ease;
     background: var(--surface-color);
 }
@@ -113,7 +126,7 @@ h1 {
 }
 
 .url-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .url-input {
@@ -144,7 +157,7 @@ h1 {
     background: var(--surface-color);
     padding: 1.5rem;
     border-radius: 0.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
@@ -177,16 +190,13 @@ h1 {
     overflow: hidden;
     box-shadow: 0 8px 30px -5px rgba(0, 0, 0, 0.3),
                 0 1px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 2rem;
+    height: 100%;
     max-width: 100%;
     border: 1px solid var(--border-color);
     transition: all 0.3s ease-in-out;
     opacity: 1;
-}
-
-.result[hidden] {
-    opacity: 0;
-    transform: translateY(10px);
+    display: flex;
+    flex-direction: column;
 }
 
 .result-header {
@@ -210,7 +220,8 @@ h1 {
     margin: 0;
     border-radius: 0 0 0.75rem 0.75rem;
     position: relative;
-    min-height: 200px;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .result pre {
@@ -257,6 +268,13 @@ h1 {
     .url-input { 
         flex-direction: column;
         .button { width: 100%; }
+    }
+    .split-layout {
+        flex-direction: column;
+        height: auto;
+    }
+    .left-pane, .right-pane {
+        width: 100%;
     }
 }
 

@@ -24,7 +24,7 @@ class Converter:
     @staticmethod
     def get_markitdown_instance(file_path: Optional[str] = None, api_key: Optional[str] = None) -> MarkItDown:
         if file_path and Converter.is_image_file(file_path) and api_key:
-            return MarkItDown(mlm_client=OpenAI(api_key=api_key), mlm_model=config.OPENAI_MODEL)
+            return MarkItDown(llm_client=OpenAI(api_key=api_key), llm_model=config.OPENAI_MODEL)
         return MarkItDown()
 
     @staticmethod

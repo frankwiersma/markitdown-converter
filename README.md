@@ -31,9 +31,32 @@ MarkItDown Converter is a web application that converts various document formats
 
 ## Installation
 
+### Option 1: Using Docker (Recommended)
+
 1. Clone the repository:
 ```bash
-git clone https://github.com/CleverCloud/markitdown-converter.git
+git clone https://github.com/frankwiersma/markitdown-converter.git
+cd markitdown-converter
+```
+
+2. Create a `.env` file with your configuration:
+```bash
+cp .env.example .env
+# Edit .env to add your OPENAI_API_KEY if needed
+```
+
+3. Build and run with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+The application will be available at `http://localhost:8080`.
+
+### Option 2: Local Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/frankwiersma/markitdown-converter.git
 cd markitdown-converter
 ```
 
@@ -56,7 +79,20 @@ export OPENAI_API_KEY=your-api-key  # or users will have to enter their own
 
 ## Usage
 
-### Running the application for development
+### Running with Docker
+
+```bash
+# Start the application
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the application
+docker-compose down
+```
+
+### Running for development
 
 ```bash
 uv run uvicorn app:app --host 0.0.0.0 --port 8080 --reload
@@ -64,11 +100,16 @@ uv run uvicorn app:app --host 0.0.0.0 --port 8080 --reload
 
 ### Web Interface
 
-Open your browser and navigate to `http://localhost:8080`. You can:
-- Drag and drop files
-- Select files using the file dialog
-- Convert content from URLs
-- Use OpenAI for image analysis (API key required)
+Open your browser and navigate to `http://localhost:8080`. The interface features:
+- **Left pane**: Drag and drop area for file upload
+  - Drag and drop files directly
+  - Click to select files using the file dialog
+  - Convert content from URLs
+  - Configure OpenAI API key for image analysis
+- **Right pane**: Live markdown result display
+  - Real-time conversion results
+  - Copy to clipboard functionality
+  - Syntax-highlighted markdown output
 
 ### API Usage
 
@@ -93,6 +134,14 @@ curl -X POST \
     -F "api_key=your-openai-key" \
     http://localhost:8080/convert
 ```
+
+## Docker Configuration
+
+The application includes:
+- **Dockerfile**: Multi-stage build for optimal image size
+- **docker-compose.yml**: Easy deployment with port 8080 exposed
+- **Volume mounting**: Persistent storage for uploaded files
+- **Environment variables**: Configured via `.env` file
 ## Deployment on Clever Cloud
 
 1. Install the Clever Tools with `npm` (or [other methods](https://github.com/CleverCloud/clever-tools?tab=readme-ov-file#installation)):
