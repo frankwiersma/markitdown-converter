@@ -29,6 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
         convertContent('/convert', formData);
     }
 
+    function handleMultipleFiles(files) {
+        const formData = new FormData();
+        
+        // Append all files to the form data
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        if (elements.apiKeyInput) {
+            const apiKey = elements.apiKeyInput.value.trim();
+            formData.append('api_key', apiKey);
+        }
+
+        convertContent('/convert', formData);
+    }
+
     function isImageFile(file) {
         return file && file.type.startsWith('image/');
     }
@@ -121,12 +137,27 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         e.stopPropagation();
         elements.dropZone.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file) handleFile(file);
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            if (files.length === 1) {
+                handleFile(files[0]);
+            } else {
+                handleMultipleFiles(files);
+            }
+        }
     });
 
     elements.selectFileBtn.addEventListener('click', () => elements.fileInput.click());
-    elements.fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+    elements.fileInput.addEventListener('change', e => {
+        const files = e.target.files;
+        if (files.length > 0) {
+            if (files.length === 1) {
+                handleFile(files[0]);
+            } else {
+                handleMultipleFiles(files);
+            }
+        }
+    });
 
     elements.convertUrlBtn.addEventListener('click', () => {
         const url = elements.urlInput.value.trim();

@@ -64,21 +64,66 @@ async def index():
 
 @app.route('/convert', methods=['POST'])
 async def convert():
-    if 'file' in (await request.files):
-        file = (await request.files)['file']
+    files = await request.files
+    form = await request.form
+    
+    # Handle multiple files
+    if 'files' in files:
+        file_list = files.getlist('files')
+        if not file_list:
+            return {'success': False, 'error': 'No files provided'}, 400
+        
+        combined_markdown = []
+        api_key = form.get('api_key') or config.OPENAI_API_KEY
+        
+        for file in file_list:
+            if not file.filename:
+                continue
+                
+            filepath = config.UPLOAD_FOLDER / secure_filename(file.filename)
+            try:
+                await file.save(filepath)
+                result = await Converter.process_file_async(filepath, api_key)
+                
+                if result['success']:
+                    # Add separator with filename
+                    combined_markdown.append(f"## File: {file.filename}")
+                    combined_markdown.append("")
+                    combined_markdown.append(result['markdown'])
+                    combined_markdown.append("")
+                    combined_markdown.append("-" * 50)
+                    combined_markdown.append("")
+                else:
+                    combined_markdown.append(f"## File: {file.filename}")
+                    combined_markdown.append("")
+                    combined_markdown.append(f"Error: {result['error']}")
+                    combined_markdown.append("")
+                    combined_markdown.append("-" * 50)
+                    combined_markdown.append("")
+            except Exception as e:
+                combined_markdown.append(f"## File: {file.filename}")
+                combined_markdown.append("")
+                combined_markdown.append(f"Error: {str(e)}")
+                combined_markdown.append("")
+                combined_markdown.append("-" * 50)
+                combined_markdown.append("")
+        
+        return {'success': True, 'markdown': '\n'.join(combined_markdown)}
+    
+    # Handle single file (backward compatibility)
+    elif 'file' in files:
+        file = files['file']
         if not file.filename:
             return {'success': False, 'error': 'No file provided'}, 400
 
         filepath = config.UPLOAD_FOLDER / secure_filename(file.filename)
         try:
             await file.save(filepath)
-            form = await request.form
             return await Converter.process_file_async(filepath, form.get('api_key') or config.OPENAI_API_KEY)
         except Exception as e:
             return {'success': False, 'error': str(e)}, 400
 
-    elif 'url' in (await request.form):
-        form = await request.form
+    elif 'url' in form:
         url = form['url'].strip()
         if not url:
             return {'success': False, 'error': 'No URL provided'}, 400
